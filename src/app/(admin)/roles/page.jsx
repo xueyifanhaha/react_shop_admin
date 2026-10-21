@@ -1,0 +1,3 @@
+export default function RolesPage() {
+  return <h1>权限管理</h1>
+}
