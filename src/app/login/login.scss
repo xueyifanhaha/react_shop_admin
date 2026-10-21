@@ -1,0 +1,67 @@
+// 登录页样式（与 page.jsx 就近存放）
+// @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
+@reference "../globals.scss";
+
+.login-page {
+  @apply flex min-h-screen items-center justify-center bg-gray-100 px-4;
+}
+
+.login-card {
+  @apply w-full max-w-[440px] overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-[0_24px_60px_-32px_rgba(15,23,42,0.4)];
+}
+
+.login-panel {
+  @apply flex flex-col px-10 pt-11 pb-9;
+}
+
+.login-mark {
+  @apply mx-auto grid h-10 w-10 place-items-center rounded-xl bg-[#2563eb] font-bold text-white shadow-[0_6px_16px_-6px_rgba(37,99,235,0.9)];
+}
+
+.login-title {
+  @apply mt-4 text-center text-[22px] font-medium tracking-tight;
+}
+
+.login-sub {
+  @apply mt-1.5 text-center text-[13.5px] text-gray-400;
+}
+
+.login-form {
+  @apply mt-6 [&_.ant-form-item]:mb-4;
+}
+
+.login-row {
+  @apply -mt-1 mb-5 flex items-center justify-between;
+}
+
+.login-hint {
+  @apply text-[12.5px] text-gray-400;
+}
+
+.login-submit {
+  @apply h-11 text-[15px] tracking-[0.1em];
+}
+
+.login-demo {
+  @apply mt-7 border-t border-dashed border-gray-200 pt-5;
+
+  &-label {
+    @apply text-xs text-gray-400;
+  }
+
+  &-list {
+    @apply mt-2.5 grid grid-cols-3 gap-2;
+  }
+
+  &-item {
+    @apply flex cursor-pointer flex-col gap-0.5 rounded-[10px] border border-gray-200 bg-[#fbfcfe] px-2.5 py-2 text-left transition-colors hover:border-[#2563eb] hover:bg-[#f5f8ff];
+
+    b {
+      @apply text-[12.5px] font-medium text-gray-700;
+    }
+
+    span {
+      @apply font-mono text-[11.5px] text-gray-400;
+    }
+  }
+}

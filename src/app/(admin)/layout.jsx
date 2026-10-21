@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { getSessionUser } from '@/server/utils/session'
 import { db } from '@/server/utils/db'
 import AdminShell from './AdminShell'
+import './admin.scss'
 
 /**
  * 后台路由组守卫（对标 nuxt_demo 的 middleware/auth.global.js）：

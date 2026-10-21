@@ -1,0 +1,50 @@
+// 后台骨架（(admin) 路由组共用：layout.jsx 守卫 + AdminShell 侧边栏/顶栏）
+// 注意：Tailwind v4 不要用 @layer components 包裹 @apply（会被编译丢弃），直接写裸规则即可。
+// @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
+@reference "../globals.scss";
+
+.admin-topbar {
+  @apply sticky top-0 z-10 flex h-[60px] items-center justify-between border-b border-gray-200 bg-white px-6;
+}
+
+.admin-crumb {
+  @apply text-[13px] text-gray-400;
+
+  b {
+    @apply font-medium text-gray-800;
+  }
+
+  .divider {
+    @apply mx-1.5 text-gray-300;
+  }
+}
+
+.admin-whoami {
+  @apply font-mono text-[12.5px] text-gray-500;
+}
+
+.admin-brand {
+  @apply flex h-[60px] items-center gap-2.5 border-b border-gray-200 px-4.5;
+
+  &-mark {
+    @apply grid h-6.5 w-6.5 place-items-center rounded-lg bg-[#2563eb] text-xs font-bold text-white;
+  }
+}
+
+.admin-side-foot {
+  @apply absolute inset-x-0 bottom-0 border-t border-gray-200 p-3.5;
+}
+
+.admin-user-meta {
+  b {
+    @apply block text-[13px] leading-tight font-medium;
+  }
+
+  span {
+    @apply block text-[11.5px] leading-tight text-gray-400;
+  }
+}
+
+.admin-content {
+  @apply mx-auto w-full max-w-[1320px] px-7 pt-6 pb-10;
+}

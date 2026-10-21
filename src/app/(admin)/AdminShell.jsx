@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { App, Button, Layout, Menu } from 'antd'
+import { App, Avatar, Button, Layout, Menu } from 'antd'
 import {
   LogoutOutlined,
   ProfileOutlined,
@@ -58,42 +58,48 @@ export default function AdminShell({ user, permissions, children }) {
 
   return (
     <Layout className="min-h-screen">
-      <Layout.Sider width={232} theme="light" className="border-r border-gray-200 sticky top-0 h-screen">
-        <div className="flex items-center gap-2.5 h-[60px] px-4.5 border-b border-gray-200">
-          <span className="grid place-items-center w-6.5 h-6.5 rounded-lg bg-[#2563eb] text-white text-xs font-bold">商</span>
+      <Layout.Sider
+        width={232}
+        theme="light"
+        className="relative sticky top-0 h-screen border-r border-gray-200"
+      >
+        <div className="admin-brand">
+          <span className="admin-brand-mark">商</span>
           <span className="text-[13.5px] font-medium">商品运营后台</span>
         </div>
 
-        <Menu mode="inline" items={menus} selectedKeys={[pathname]} className="border-inline-end-0 px-2 pt-3" />
+        <Menu mode="inline" items={menus} selectedKeys={[pathname]} className="border-0 px-2 pt-3" />
 
-        <div className="absolute bottom-0 inset-x-0 border-t border-gray-200 p-3.5">
+        <div className="admin-side-foot">
           <div className="flex items-center gap-2.5">
-            <span className="grid place-items-center w-8 h-8 rounded-full bg-[#eef3fe] text-[#2563eb] text-[13px] font-medium">
+            <Avatar
+              size={32}
+              style={{ backgroundColor: '#eef3fe', color: '#2563eb', fontSize: 13, fontWeight: 500 }}
+            >
               {avatarText}
-            </span>
-            <div className="min-w-0">
-              <div className="text-[13px] font-medium leading-tight">{user?.name ?? role.label}</div>
-              <div className="text-[11.5px] text-gray-400 leading-tight">{role.level} 级 · {role.label}</div>
+            </Avatar>
+            <div className="admin-user-meta">
+              <b>{user?.name ?? role.label}</b>
+              <span>{role.level} 级 · {role.label}</span>
             </div>
           </div>
         </div>
       </Layout.Sider>
 
       <Layout className="min-w-0">
-        <Layout.Header className="bg-white border-b border-gray-200 flex items-center justify-between px-6 !h-[60px] sticky top-0 z-10">
-          <div className="text-[13px] text-gray-400">
-            后台管理 <span className="mx-1.5 text-gray-300">/</span>{' '}
-            <span className="text-gray-800 font-medium">{currentLabel}</span>
+        <Layout.Header className="admin-topbar">
+          <div className="admin-crumb">
+            后台管理 <span className="divider">/</span> <b>{currentLabel}</b>
           </div>
           <div className="flex items-center gap-2.5">
-            <span className="text-[12.5px] text-gray-500 font-mono">{user?.username}</span>
+            <span className="admin-whoami">{user?.username}</span>
             <Button type="text" icon={<LogoutOutlined />} onClick={onLogout}>
               退出
             </Button>
           </div>
         </Layout.Header>
 
-        <Layout.Content className="w-full max-w-[1320px] mx-auto px-7 pt-6 pb-10">
+        <Layout.Content className="admin-content">
           {children}
         </Layout.Content>
       </Layout>
