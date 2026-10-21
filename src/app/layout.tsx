@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ConfigProvider, App as AntdApp } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import "./globals.css";
+import "./globals.scss";
 
 /** 后台所有页面都依赖会话（cookies），antd 也含运行时样式，整体走动态渲染 */
 export const dynamic = "force-dynamic";
