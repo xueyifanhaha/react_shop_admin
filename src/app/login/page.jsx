@@ -47,7 +47,10 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-panel">
-         
+          <div className="text-center">
+            <h2 className="login-title">商品运营后台</h2>
+            <p className="login-sub">登录后按角色展示可用的功能与按钮</p>
+          </div>
 
           <Form form={form} initialValues={initialValues} onFinish={onFinish} size="large" className="login-form">
             <Form.Item
