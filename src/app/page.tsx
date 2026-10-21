@@ -1,7 +1,8 @@
-export default function Home() {
-  return (
-    <div className="flex h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold">商城后台管理系统</h1>
-    </div>
-  );
+import { redirect } from "next/navigation";
+import { getSessionUser } from "@/server/utils/session";
+
+/** 根路径：已登录进后台，未登录去登录页 */
+export default async function Home() {
+  const user = await getSessionUser();
+  redirect(user ? "/products" : "/login");
 }
