@@ -1,0 +1,51 @@
+// 商品列表页样式（与 page.jsx 就近存放）
+// @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
+@reference "../../globals.scss";
+
+.prod-head {
+  @apply mb-[18px] flex flex-wrap items-end justify-between gap-4;
+}
+
+.prod-title {
+  @apply text-[20px] font-medium tracking-tight;
+}
+
+.prod-sub {
+  @apply mt-1.5 text-[13px] text-gray-400;
+}
+
+.prod-card {
+  @apply overflow-hidden rounded-xl border border-gray-200 bg-white;
+}
+
+.prod-filter {
+  @apply mb-3.5 flex flex-wrap items-center justify-between gap-2.5 p-3.5;
+}
+
+.prod-filter-group {
+  @apply flex flex-wrap items-center gap-2.5;
+}
+
+.prod-cat-error {
+  @apply flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-[13px] text-red-600;
+}
+
+.prod-meta {
+  @apply grid min-w-0;
+}
+
+.prod-meta b {
+  @apply block overflow-hidden text-ellipsis whitespace-nowrap text-[13.5px] font-medium;
+}
+
+.prod-meta span {
+  @apply font-mono text-[11.5px] text-gray-400;
+}
+
+.prod-stock-low {
+  @apply font-medium text-red-600;
+}
+
+.prod-foot-hint {
+  @apply text-[12.5px] text-gray-400;
+}
