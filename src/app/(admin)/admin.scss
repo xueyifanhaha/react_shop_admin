@@ -3,12 +3,14 @@
 // @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
 @reference "../globals.scss";
 
+// 顶栏的背景色/高度由 ConfigProvider 的 Layout 组件 token 管（headerBg/headerHeight），
+// 这里只负责布局与描边，避免两处声明打架
 .admin-topbar {
-  @apply sticky top-0 z-10 flex h-[60px] items-center justify-between border-b border-gray-200 bg-white px-6;
+  @apply sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 px-6;
 }
 
 .admin-crumb {
-  @apply text-[13px] text-gray-400;
+  @apply text-[13px] text-gray-500;
 
   b {
     @apply font-medium text-gray-800;

@@ -61,7 +61,10 @@ export default function AdminShell({ user, permissions, children }) {
       <Layout.Sider
         width={232}
         theme="light"
-        className="relative sticky top-0 h-screen border-r border-gray-200"
+        className="border-r border-gray-200"
+        // antd 给 .ant-layout-sider 内置 position:relative（无层级样式，压过 Tailwind
+        // @layer 里的 sticky 工具类），固定侧栏只能用内联样式
+        style={{ position: 'sticky', top: 0, height: '100vh' }}
       >
         <div className="admin-brand">
           <span className="admin-brand-mark">商</span>
