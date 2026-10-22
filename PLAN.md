@@ -13,7 +13,7 @@
 - [x] 阶段 1：Next.js 脚手架 + 依赖 + 清理演示代码
 - [x] 阶段 2：server 层迁移（11 个 API 端点，已实测通过）
 - [x] 阶段 3：前端基建 + 后台骨架 + 登录页
-- [ ] **阶段 4：业务页面迁移（products → categories → roles → logs）**（进行中，products 两页 + categories 已完成）
+- [ ] **阶段 4：业务页面迁移（products → categories → roles → logs）**（进行中，仅剩 logs）
 - [ ] 阶段 5：收尾（403/错误页、响应式、构建验证、合并 main）
 
 ## 框架概念映射

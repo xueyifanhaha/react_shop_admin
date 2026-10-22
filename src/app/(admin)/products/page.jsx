@@ -192,7 +192,7 @@ export default function ProductsPage() {
           showIcon
           closable={false}
           className="flex-1"
-          message="商品加载失败"
+          title="商品加载失败"
           description={productsQuery.error?.bizMessage ?? '请确认登录状态后重试'}
         />
         <Button size="small" className="shrink-0" onClick={() => productsQuery.refetch()}>重新加载</Button>

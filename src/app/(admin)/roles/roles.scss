@@ -1,0 +1,79 @@
+// 权限管理页样式（与 page.jsx 就近存放，前缀 role-）
+// @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
+@reference "../../globals.scss";
+
+.role-head {
+  @apply mb-[18px] flex flex-wrap items-end justify-between gap-4;
+}
+
+.role-title {
+  @apply text-[20px] font-medium tracking-tight;
+}
+
+.role-sub {
+  @apply mt-1.5 max-w-[640px] text-[13px] leading-6 text-gray-400;
+}
+
+.role-actions {
+  @apply flex shrink-0 gap-2.5;
+}
+
+.role-notice {
+  @apply mb-3.5;
+}
+
+.role-card {
+  @apply overflow-hidden rounded-xl border border-gray-200 bg-white;
+}
+
+.role-matrix {
+  @apply px-5 pb-4 pt-1.5;
+}
+
+.role-mhead {
+  @apply grid grid-cols-[130px_130px_1fr] items-center gap-3 border-b border-gray-200 py-3;
+}
+
+.role-perm-name--strong {
+  @apply text-[13px] font-medium text-gray-700;
+}
+
+.role-col {
+  @apply flex items-center justify-center gap-2;
+}
+
+.role-col b {
+  @apply text-[13px] font-medium text-gray-700;
+}
+
+.role-cells {
+  @apply grid grid-cols-3;
+}
+
+.role-cell {
+  @apply flex justify-center;
+}
+
+.role-group h2 {
+  @apply mb-0.5 mt-4 text-[13px] font-medium text-indigo-600;
+}
+
+.role-row {
+  @apply grid grid-cols-[130px_130px_1fr] items-center gap-3 py-2.5;
+}
+
+.role-row + .role-row {
+  @apply border-t border-dashed border-gray-200;
+}
+
+.role-perm-name {
+  @apply text-[13.5px] text-gray-700;
+}
+
+.role-perm-key {
+  @apply font-mono text-[11.5px] text-gray-400;
+}
+
+.role-foot-hint {
+  @apply mt-3.5 text-[12.5px] leading-7 text-gray-400;
+}

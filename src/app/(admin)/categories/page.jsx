@@ -122,7 +122,7 @@ export default function CategoriesPage() {
           showIcon
           closable={false}
           className="flex-1"
-          message="分类加载失败"
+          title="分类加载失败"
           description={categoriesQuery.error?.bizMessage ?? '请确认登录状态后重试'}
         />
         <Button size="small" className="shrink-0" onClick={() => categoriesQuery.refetch()}>重新加载</Button>
