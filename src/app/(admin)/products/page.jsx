@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useDeferredValue, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { App, Alert, Button, Input, Select, Switch, Table, Tag } from 'antd'
 import { PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons'
@@ -29,18 +29,21 @@ export default function ProductsPage() {
   const queryClient = useQueryClient()
 
   /* ---------- 筛选条件与分页 ---------- */
-  // drafts 是输入框草稿，点「搜索」才写入 filters（触发 queryKey 变化重新请求）
-  const [drafts, setDrafts] = useState({ categoryId: undefined, status: undefined, keyword: '' })
   const [filters, setFilters] = useState({ categoryId: undefined, status: undefined, keyword: '' })
   const [pager, setPager] = useState({ page: 1, pageSize: 8 })
 
-  /** 查询条件：分页与筛选合并；空值取 undefined（api 层会丢掉），keyword 映射为接口参数 q */
+  /** 控件绑 filters（跟手），查询参数用 deferredFilters（React 空闲时才更新）——
+   * 连续输入的中间态被并发渲染跳过，不再需要「搜索」按钮和双层 state */
+  const deferredFilters = useDeferredValue(filters)
+
+  /** 查询条件：分页与筛选合并；空值取 undefined（api 层会丢掉），keyword 映射为接口参数 q。
+   * queryKey 每次渲染都是新对象没关系，React Query 按结构化内容哈希，值没变不重取 */
   const query = {
     page: pager.page,
     pageSize: pager.pageSize,
-    categoryId: filters.categoryId,
-    status: filters.status,
-    q: filters.keyword.trim() || undefined,
+    categoryId: deferredFilters.categoryId,
+    status: deferredFilters.status,
+    q: deferredFilters.keyword.trim() || undefined,
   }
 
   /* ---------- 数据 ---------- */
@@ -54,15 +57,12 @@ export default function ProductsPage() {
   const total = productsQuery.data?.total ?? 0
 
   /** 条件一变就回第一页，否则会停在新结果里不存在的页码上 */
-  function applySearch() {
-    setFilters({ ...drafts })
-    setPager(prev => ({ ...prev, page: 1 }))
+  function resetPage(p) {
+    return p.page === 1 ? p : { ...p, page: 1 }
   }
 
   function resetFilters() {
-    const empty = { categoryId: undefined, status: undefined, keyword: '' }
-    setDrafts(empty)
-    setFilters(empty)
+    setFilters({ categoryId: undefined, status: undefined, keyword: '' })
     setPager({ page: 1, pageSize: 8 })
   }
 
@@ -228,8 +228,11 @@ export default function ProductsPage() {
               )
             : (
                 <Select
-                  value={drafts.categoryId}
-                  onChange={value => setDrafts(d => ({ ...d, categoryId: value }))}
+                  value={filters.categoryId}
+                  onChange={value => {
+                    setFilters(f => ({ ...f, categoryId: value }))
+                    setPager(resetPage)
+                  }}
                   placeholder="全部分类"
                   allowClear
                   loading={categoriesQuery.isLoading}
@@ -238,8 +241,11 @@ export default function ProductsPage() {
                 />
               )}
           <Select
-            value={drafts.status}
-            onChange={value => setDrafts(d => ({ ...d, status: value }))}
+            value={filters.status}
+            onChange={value => {
+              setFilters(f => ({ ...f, status: value }))
+              setPager(resetPage)
+            }}
             placeholder="全部状态"
             allowClear
             style={{ width: 130 }}
@@ -249,9 +255,11 @@ export default function ProductsPage() {
             ]}
           />
           <Input
-            value={drafts.keyword}
-            onChange={e => setDrafts(d => ({ ...d, keyword: e.target.value }))}
-            onPressEnter={applySearch}
+            value={filters.keyword}
+            onChange={e => {
+              setFilters(f => ({ ...f, keyword: e.target.value }))
+              setPager(resetPage)
+            }}
             placeholder="搜索名称或 SKU"
             prefix={<SearchOutlined />}
             allowClear
@@ -259,7 +267,6 @@ export default function ProductsPage() {
           />
         </div>
         <div className="prod-filter-group">
-          <Button type="primary" icon={<SearchOutlined />} onClick={applySearch}>搜索</Button>
           <Button icon={<ReloadOutlined />} onClick={resetFilters}>重置</Button>
         </div>
       </section>

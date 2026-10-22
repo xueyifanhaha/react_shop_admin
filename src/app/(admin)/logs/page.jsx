@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useDeferredValue, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Alert, Button, Input, Select, Table, Tag } from 'antd'
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
@@ -12,8 +12,9 @@ import './logs.scss'
  * 操作日志页（对标旧版 pages/logs.vue）：
  * - 纯只读数据：整页只有一个 useQuery，没有任何 useMutation——
  *   「读用 query、写用 mutation」的分界在这页最纯粹
- * - queryKey 携带筛选+分页：drafts 是输入草稿，点「搜索」才写入 filters 触发重取
- *   （与 products 列表页同款双层 state，防止逐键发请求）
+ * - 关键词用 useDeferredValue：输入框跟手更新，查询参数用派生的低优先级值，
+ *   React 并发渲染自动跳过连续输入的中间态，只对「稳定下来」的值发请求——
+ *   旧版双层 state（drafts/filters）+「搜索」按钮的手动防抖被这个 Hook 取代
  * - 日志只增不减，不存在「删到空页」的页码回退问题，比商品列表少一个边界
  */
 
@@ -40,17 +41,21 @@ function actionMeta(action) {
 }
 
 export default function LogsPage() {
-  // drafts 是输入框草稿，点「搜索」才写入 filters（触发 queryKey 变化重新请求）
-  const [drafts, setDrafts] = useState({ action: undefined, keyword: '' })
-  const [filters, setFilters] = useState({ action: undefined, keyword: '' })
+  const [keyword, setKeyword] = useState('')
+  const [action, setAction] = useState(undefined)
   const [pager, setPager] = useState({ page: 1, pageSize: 8 })
 
-  /** 查询条件：分页与筛选合并；keyword 映射为接口参数 q */
+  /** 输入框用 keyword（跟手），查询参数用 deferredKeyword（React 空闲时才更新）——
+   * 连续输入时中间态被并发渲染跳过，逐键请求天然不发生 */
+  const deferredKeyword = useDeferredValue(keyword)
+
+  /** 查询条件：分页与筛选合并；keyword 映射为接口参数 q。
+   * queryKey 每次渲染都是新对象没关系，React Query 按结构化内容哈希，值没变不重取 */
   const query = {
     page: pager.page,
     pageSize: pager.pageSize,
-    action: filters.action,
-    q: filters.keyword.trim() || undefined,
+    action,
+    q: deferredKeyword.trim() || undefined,
   }
 
   const logsQuery = useQuery({ queryKey: ['logs', query], queryFn: () => api.logs.list(query) })
@@ -58,15 +63,13 @@ export default function LogsPage() {
   const total = logsQuery.data?.total ?? 0
 
   /** 条件一变就回第一页，否则会停在新结果里不存在的页码上 */
-  function applySearch() {
-    setFilters({ ...drafts })
-    setPager(p => ({ ...p, page: 1 }))
+  function resetPage(p) {
+    return p.page === 1 ? p : { ...p, page: 1 }
   }
 
   function resetFilters() {
-    const empty = { action: undefined, keyword: '' }
-    setDrafts(empty)
-    setFilters(empty)
+    setKeyword('')
+    setAction(undefined)
     setPager({ page: 1, pageSize: 8 })
   }
 
@@ -140,25 +143,29 @@ export default function LogsPage() {
       <section className="log-card log-filter">
         <div className="log-filter-group">
           <Select
-            value={drafts.action}
-            onChange={value => setDrafts(d => ({ ...d, action: value }))}
+            value={action}
+            onChange={value => {
+              setAction(value ?? undefined)
+              setPager(resetPage)
+            }}
             placeholder="全部动作"
             allowClear
             style={{ width: 150 }}
             options={ACTION_OPTIONS}
           />
           <Input
-            value={drafts.keyword}
-            onChange={e => setDrafts(d => ({ ...d, keyword: e.target.value }))}
-            onPressEnter={applySearch}
-            placeholder="搜索操作人 / 对象 / 详情"
+            value={keyword}
+            onChange={e => {
+              setKeyword(e.target.value)
+              setPager(resetPage)
+            }}
+            placeholder="搜索操作人 / 对象 / 详情（输入即搜）"
             prefix={<SearchOutlined />}
             allowClear
-            style={{ width: 220 }}
+            style={{ width: 240 }}
           />
         </div>
         <div className="log-filter-group">
-          <Button type="primary" icon={<SearchOutlined />} onClick={applySearch}>搜索</Button>
           <Button icon={<ReloadOutlined />} onClick={resetFilters}>重置</Button>
         </div>
       </section>
