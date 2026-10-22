@@ -11,7 +11,7 @@ import {
   ShoppingOutlined,
   TagsOutlined,
 } from '@ant-design/icons'
-import { ADMIN_NAV } from '@/shared/permissions'
+import { ADMIN_NAV, PERM } from '@/shared/permissions'
 import { useAuthStore } from '@/stores/auth'
 import { usePermission } from '@/hooks/usePermission'
 
@@ -20,6 +20,19 @@ const iconMap = {
   tag: <TagsOutlined />,
   log: <ProfileOutlined />,
   shield: <SafetyCertificateOutlined />,
+}
+
+/**
+ * 路由 → 所需权限点（对标旧版 auth.global.js 的 requiredPerm）。
+ * 与旧版差异：旧版把 /products/[id] 详情页划给 product:edit，
+ * 新项目详情页明确支持 viewer 只读查看，故 /products 全段统一按 product:view。
+ */
+function requiredPerm(pathname) {
+  if (pathname.startsWith('/products')) return PERM.PRODUCT_VIEW
+  if (pathname.startsWith('/categories')) return PERM.CATEGORY_VIEW
+  if (pathname.startsWith('/logs')) return PERM.LOG_VIEW
+  if (pathname.startsWith('/roles')) return PERM.ROLE_MANAGE
+  return null
 }
 
 /** 侧边栏菜单按权限过滤：2/3 级自动看不到操作日志与权限管理 */
@@ -44,6 +57,16 @@ export default function AdminShell({ user, permissions, children }) {
   useEffect(() => {
     setSession(user, permissions)
   }, [user, permissions, setSession])
+
+  /* ---------- 页面级权限守卫（对标旧版全局中间件的 /403 分支） ----------
+   * 服务端布局只拦「未登录」；「已登录但权限不足」在这里 replace 到 /403。
+   * 判断读服务端直传的 permissions prop 而非 store：store 由 effect 注入，
+   * 刷新后的首帧还是空的，用它会把管理员也误踢出去。 */
+  const need = requiredPerm(pathname)
+  const allowed = !need || permissions.includes(need)
+  useEffect(() => {
+    if (!allowed) router.replace('/403')
+  }, [allowed, router])
 
   const menus = useMenus(can)
   const currentLabel
@@ -103,7 +126,7 @@ export default function AdminShell({ user, permissions, children }) {
         </Layout.Header>
 
         <Layout.Content className="admin-content">
-          {children}
+          {allowed ? children : null}
         </Layout.Content>
       </Layout>
     </Layout>

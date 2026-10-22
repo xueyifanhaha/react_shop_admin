@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+body {
+  background: #f5f5f5;
+  color: #171717;
+}
+
+/*
+ * 页面级语义类就近存放：
+ * - 后台骨架 .admin-* → src/app/(admin)/admin.scss（由 (admin)/layout.jsx 引入）
+ * - 登录页 .login-*   → src/app/login/login.scss（由 login/page.jsx 引入）
+ */

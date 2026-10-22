@@ -1,0 +1,27 @@
+// 403 无权限页样式（与 page.jsx 就近存放，前缀 fbd-）
+// @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
+@reference "../globals.css";
+
+.fbd-page {
+  @apply grid min-h-screen place-items-center bg-gray-50 p-6;
+}
+
+.fbd-card {
+  @apply rounded-2xl border border-gray-200 bg-white px-14 py-11 text-center;
+}
+
+.fbd-code {
+  @apply text-[40px] font-medium leading-none tracking-wide text-gray-300;
+}
+
+.fbd-card h1 {
+  @apply mt-3.5 text-[17px] font-medium text-gray-800;
+}
+
+.fbd-desc {
+  @apply mt-2.5 text-[13px] text-gray-400;
+}
+
+.fbd-btn {
+  @apply mt-6 inline-block rounded-lg bg-blue-600 px-5 py-2 text-[13.5px] text-white transition-colors hover:bg-blue-700;
+}

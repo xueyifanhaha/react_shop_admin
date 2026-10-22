@@ -1,6 +1,6 @@
 // 商品详情 / 编辑页样式（与 page.jsx 就近存放）
 // @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
-@reference "../../../globals.scss";
+@reference "../../../globals.css";
 
 .pedit-head {
   @apply mb-[18px] flex flex-wrap items-end justify-between gap-4;
@@ -35,10 +35,8 @@
 }
 
 .pedit-form {
-  :global {
-    .ant-form-item {
-      margin-bottom: 16px;
-    }
+  .ant-form-item {
+    margin-bottom: 16px;
   }
 }
 

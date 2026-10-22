@@ -1,6 +1,6 @@
 // 登录页样式（与 page.jsx 就近存放）
 // @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
-@reference "../globals.scss";
+@reference "../globals.css";
 
 .login-page {
   @apply flex min-h-screen items-center justify-center bg-gray-100 px-4;
