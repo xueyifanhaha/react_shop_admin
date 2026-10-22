@@ -8,7 +8,7 @@ import {
   normalizeProductBody,
   requireProduct,
 } from '@/server/utils/product'
-import { ApiError, handler, parseId } from '@/server/utils/http'
+import { handler, parseId } from '@/server/utils/http'
 
 /** GET /api/products/:id —— 商品详情（product:view） */
 export const GET = handler(async (request, { params }) => {

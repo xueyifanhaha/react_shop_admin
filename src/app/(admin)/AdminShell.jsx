@@ -37,7 +37,6 @@ function requiredPerm(pathname) {
 
 /** 侧边栏菜单按权限过滤：2/3 级自动看不到操作日志与权限管理 */
 function useMenus(can) {
-  const pathname = usePathname()
   return ADMIN_NAV.filter(item => can(item.permission)).map(item => ({
     key: item.to,
     icon: iconMap[item.icon],

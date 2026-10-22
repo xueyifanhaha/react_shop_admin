@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Alert, App, Button, Checkbox, Tag } from 'antd'
 import { ReloadOutlined } from '@ant-design/icons'
@@ -11,7 +11,8 @@ import './roles.scss'
 /**
  * 权限管理页（对标旧版 pages/roles.vue）：
  * - 权限矩阵：行是权限点（按分组展示），列是 1/2/3 级角色；1 级锁定全选
- * - draft（草稿）与 savedRoles（服务端数据）分离：dirty = 两者不一致的级别
+ * - 草稿编辑：edited 只存「被改过的级别」，未改的级别渲染期从服务端数据派生；
+ *   dirty = 派生草稿与服务端不一致的级别
  * - 保存逐级 PUT（草稿里改了几级就提交几级），全部成功后失效 ['roles']；
  *   部分成功时已落库的级别保留，失败级别留在草稿里可直接重试
  * - 与旧版差异：Vue 用 computed 对比 draft/saved；这里 dirty 在每次渲染时
@@ -32,40 +33,39 @@ export default function RolesPage() {
   const rolesQuery = useQuery({ queryKey: ['roles'], queryFn: api.roles.list })
   const savedRoles = rolesQuery.data?.items ?? []
 
-  /* ---------- 草稿：{ 1: [...], 2: [...], 3: [...] }，数据到达后初始化一次 ---------- */
-  const [draft, setDraft] = useState(null)
-  useEffect(() => {
-    if (!rolesQuery.data) return
-    // 函数式更新 + ?? ：已初始化过就不覆盖（保存后 refetch 也不会冲掉未保存的草稿）
-    setDraft(prev => prev ?? Object.fromEntries(
-      (rolesQuery.data.items ?? []).map(r => [r.level, [...r.permissions]]),
-    ))
-  }, [rolesQuery.data])
+  /* ---------- 草稿：渲染期派生，而不是数据到达后在 effect 里 setDraft ----------
+   * edited 只存被改过的级别；未改级别实时读服务端值。
+   * 好处：无首帧 setState（react-hooks 新规要求）、数据到达自动有值、
+   * 保存后 refetch 也不会冲掉未保存的草稿 */
+  const [edited, setEdited] = useState(null)
 
+  function serverPerms(level) {
+    return savedRoles.find(r => r.level === level)?.permissions ?? []
+  }
+  function draftOf(level) {
+    return edited?.[level] ?? serverPerms(level)
+  }
   function isChecked(level, perm) {
-    return draft?.[level]?.includes(perm) ?? false
+    return draftOf(level).includes(perm)
   }
 
   function toggle(level, perm) {
-    setDraft(prev => ({
-      ...prev,
-      [level]: prev[level].includes(perm)
-        ? prev[level].filter(p => p !== perm)
-        : [...prev[level], perm],
-    }))
+    const base = draftOf(level)
+    const next = base.includes(perm) ? base.filter(p => p !== perm) : [...base, perm]
+    setEdited(prev => ({ ...prev, [level]: next }))
   }
 
   /* ---------- dirty：与已保存版本不一致的角色级别（渲染时直接算，对标旧版 computed） ---------- */
   const changedLevels = savedRoles
     .filter((r) => {
-      const d = draft?.[r.level] ?? []
+      const d = draftOf(r.level)
       return r.permissions.length !== d.length || r.permissions.some(p => !d.includes(p))
     })
     .map(r => r.level)
-  const dirty = draft !== null && changedLevels.length > 0
+  const dirty = changedLevels.length > 0
 
   /** 规则：2/3 级至少保留「查看商品」，否则整级变空白后台（黄色提示，不阻止保存） */
-  const emptyRisk = draft !== null
+  const emptyRisk = rolesQuery.data
     && LEVELS.some(({ level, locked }) => !locked && !isChecked(level, 'product:view'))
 
   /* ---------- 保存：逐级 PUT，成功后失效缓存让 savedRoles 与服务端对账 ---------- */
@@ -73,7 +73,7 @@ export default function RolesPage() {
     mutationFn: async (levels) => {
       // 顺序提交，中途失败时前面已落库的级别保留在服务端
       for (const level of levels) {
-        await api.roles.update(level, draft[level])
+        await api.roles.update(level, draftOf(level))
       }
     },
     onSuccess: () => {
@@ -89,12 +89,12 @@ export default function RolesPage() {
 
   /** 放弃未保存的修改，回到已保存状态 */
   function discard() {
-    setDraft(Object.fromEntries(savedRoles.map(r => [r.level, [...r.permissions]])))
+    setEdited(null)
   }
 
   /** 恢复种子角色预设（只是草稿操作，要点保存才会落库） */
   function resetToPreset() {
-    setDraft(Object.fromEntries(
+    setEdited(Object.fromEntries(
       structuredClone(ROLE_PRESETS).map(r => [r.level, [...r.permissions]]),
     ))
   }
@@ -164,7 +164,7 @@ export default function RolesPage() {
           </div>
         </div>
 
-        {draft !== null && PERMISSION_GROUPS.map(group => (
+        {!rolesQuery.isPending && PERMISSION_GROUPS.map(group => (
           <div key={group.group} className="role-group">
             <h2>{group.group}</h2>
             {group.items.map(item => (

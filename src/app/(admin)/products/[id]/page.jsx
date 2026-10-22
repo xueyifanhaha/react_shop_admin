@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -46,7 +46,11 @@ export default function ProductEditPage() {
 
   /* ---------- 数据：分类下拉 + 商品详情 ---------- */
   const categoriesQuery = useQuery({ queryKey: ['categories'], queryFn: api.categories.list })
-  const categories = categoriesQuery.data?.items ?? []
+  // useMemo 包一层：data 不变时保持同一数组引用，下游 categoryName 的 useMemo 依赖才稳定
+  const categories = useMemo(
+    () => categoriesQuery.data?.items ?? [],
+    [categoriesQuery.data],
+  )
 
   const productQuery = useQuery({
     queryKey: ['product', id],
@@ -55,14 +59,15 @@ export default function ProductEditPage() {
   })
   const product = productQuery.data?.item ?? null
 
-  /** 详情到达后填进表单（每个商品只填一次；保存后的表单同步在 onSuccess 里做，避免覆盖用户正在编辑的草稿） */
-  const [filledId, setFilledId] = useState(null)
+  /** 详情到达后填进表单（每个商品只填一次；保存后的表单同步在 onSuccess 里做，避免覆盖用户正在编辑的草稿）。
+   * 用 ref 而不是 state：effect 只需要「记一下填过没有」，不需要触发重渲染 */
+  const filledIdRef = useRef(null)
   useEffect(() => {
-    if (!isNew && product && filledId !== product.id) {
+    if (!isNew && product && filledIdRef.current !== product.id) {
       form.setFieldsValue(toForm(product))
-      setFilledId(product.id)
+      filledIdRef.current = product.id
     }
-  }, [isNew, product, filledId, form])
+  }, [isNew, product, form])
 
   /* ---------- 保存 ---------- */
   const saveMutation = useMutation({
@@ -77,7 +82,7 @@ export default function ProductEditPage() {
       }
       // 同步表单为服务端返回的最新值，并刷新列表页缓存
       form.setFieldsValue(toForm(item))
-      setFilledId(item.id)
+      filledIdRef.current = item.id
       message.success('商品已保存')
       queryClient.invalidateQueries({ queryKey: ['product', String(item.id)] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
