@@ -1,0 +1,95 @@
+// 商品详情 / 编辑页样式（与 page.jsx 就近存放）
+// @reference：本文件不含 tailwind 入口，@apply 需引用全局文件获得工具类上下文
+@reference "../../../globals.scss";
+
+.pedit-head {
+  @apply mb-[18px] flex flex-wrap items-end justify-between gap-4;
+}
+
+.pedit-back {
+  @apply inline-flex items-center gap-1 text-[12.5px] text-gray-400 transition-colors;
+
+  &:hover {
+    color: #2563eb;
+  }
+}
+
+.pedit-title {
+  @apply mt-1.5 text-[20px] font-medium tracking-tight;
+}
+
+.pedit-meta {
+  @apply mt-1.5 flex items-center gap-2 text-[12.5px] text-gray-400;
+
+  i {
+    @apply not-italic text-gray-300;
+  }
+}
+
+.pedit-actions {
+  @apply flex gap-2.5;
+}
+
+.pedit-notice {
+  @apply mb-3.5;
+}
+
+.pedit-form {
+  :global {
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+  }
+}
+
+.pedit-layout {
+  @apply grid grid-cols-[minmax(0,1fr)_340px] items-start gap-3.5;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.pedit-col {
+  @apply grid min-w-0 gap-3.5;
+}
+
+.pedit-card {
+  @apply rounded-xl border border-gray-200 bg-white px-5 py-[18px];
+
+  h2 {
+    @apply mb-3.5 text-[14px] font-medium text-gray-700;
+  }
+}
+
+.pedit-error {
+  @apply flex items-center justify-between gap-4 p-3.5;
+}
+
+.pedit-loading {
+  @apply grid place-items-center py-24;
+}
+
+.pedit-hint {
+  @apply mb-3 mt-0.5 text-[12.5px] text-gray-400;
+}
+
+.pedit-hint-warn {
+  @apply text-red-600;
+}
+
+.pedit-meta-row {
+  @apply flex items-center justify-between border-b border-dashed border-gray-200 py-[7px] text-[13px];
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  span {
+    color: #9ca3af;
+  }
+
+  b {
+    @apply font-medium tabular-nums;
+  }
+}
