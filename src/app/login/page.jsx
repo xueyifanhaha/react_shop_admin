@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { App, Button, Checkbox, Form, Input } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
@@ -20,8 +20,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [form] = Form.useForm()
 
-  // 静态阶段先预填一个账号，方便直接看到校验效果
+  // 密码预填值只在客户端挂载后写入：若经 SSR 渲染进 HTML，hydration 后 React 的
+  // 受控值跟踪器会与 DOM 失同步（props 有值、DOM 却空），显示永远是空。
   const initialValues = { username: 'admin', password: 'demo-123456', remember: true }
+
+  useEffect(() => {
+    form.setFieldsValue(initialValues)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function onFinish(values) {
     setLoading(true)
@@ -40,19 +46,15 @@ export default function LoginPage() {
 
   function fill(username) {
     form.setFieldsValue({ username, password: 'demo-123456' })
-    form.clearValidation?.()
   }
 
   return (
     <div className="login-page">
       <div className="login-card">
         <div className="login-panel">
-          <div className="text-center">
-            <h2 className="login-title">商品运营后台</h2>
-            <p className="login-sub">登录后按角色展示可用的功能与按钮</p>
-          </div>
+          <h2 className="login-title">登录-商品运营后台</h2>
 
-          <Form form={form} initialValues={initialValues} onFinish={onFinish} size="large" className="login-form">
+          <Form form={form} initialValues={{ username: 'admin', remember: true }} onFinish={onFinish} size="large" className="login-form">
             <Form.Item
               name="username"
               rules={[

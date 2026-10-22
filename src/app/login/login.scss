@@ -14,16 +14,8 @@
   @apply flex flex-col px-10 pt-11 pb-9;
 }
 
-.login-mark {
-  @apply mx-auto grid h-10 w-10 place-items-center rounded-xl bg-[#2563eb] font-bold text-white shadow-[0_6px_16px_-6px_rgba(37,99,235,0.9)];
-}
-
 .login-title {
-  @apply mt-4 text-center text-[22px] font-medium tracking-tight;
-}
-
-.login-sub {
-  @apply mt-1.5 text-center text-[13.5px] text-gray-400;
+  @apply text-center text-[22px] font-medium tracking-tight mb-[20px];
 }
 
 .login-form {
