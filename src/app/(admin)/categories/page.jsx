@@ -73,7 +73,7 @@ export default function CategoriesPage() {
   const columns = [
     {
       title: '分类名称',
-      minWidth: 180,
+      minWidth: 220,
       render: (_, row) => (
         <span className="cat-name">
           {row.name}
@@ -83,7 +83,7 @@ export default function CategoriesPage() {
     },
     {
       title: '描述',
-      minWidth: 240,
+      minWidth: 320,
       render: (_, row) => <span className="cat-desc">{row.description || '—'}</span>,
     },
     {
@@ -94,7 +94,7 @@ export default function CategoriesPage() {
         <Tag color={row.productCount > 0 ? 'blue' : 'default'}>{row.productCount} 件</Tag>
       ),
     },
-    { title: '创建时间', width: 170, dataIndex: 'createdAt' },
+    { title: '创建时间', width: 180, dataIndex: 'createdAt' },
     // 无 category:edit 权限整个操作列不出（连表头都没有，同 products 页条件展开写法）
     ...(can(PERM.CATEGORY_EDIT)
       ? [{
@@ -150,7 +150,7 @@ export default function CategoriesPage() {
           columns={columns}
           dataSource={items}
           loading={categoriesQuery.isPending}
-          scroll={{ x: 830 }}
+          scroll={{ x: 960 }}
           locale={{ emptyText: '还没有分类' }}
         />
         <div className="cat-foot">

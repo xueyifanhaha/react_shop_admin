@@ -134,7 +134,7 @@ export default function ProductsPage() {
     },
     {
       title: '单价',
-      width: 120,
+      width: 130,
       align: 'right',
       render: (_, row) => `¥${money(row.price)}`,
     },
@@ -166,7 +166,8 @@ export default function ProductsPage() {
             </Tag>
           )),
     },
-    { title: '更新时间', width: 160, dataIndex: 'updatedAt' },
+    // 更新时间用 minWidth 做第二弹性列：宽屏下和「商品」分摊剩余空间，避免单列独撑
+    { title: '更新时间', minWidth: 180, dataIndex: 'updatedAt' },
     // 无 product:edit 权限整个操作列不出现在 columns 里（连表头都没有，对标旧版 v-if 列）
     ...(can(PERM.PRODUCT_EDIT)
       ? [{
