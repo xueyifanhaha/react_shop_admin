@@ -8,6 +8,10 @@ import { ApiError, handler, parseId } from '@/server/utils/http'
 /**
  * PUT /api/roles/:level —— 修改某一级角色的权限点（role:manage）。
  *
+ * 【范式对照】练习④后页面已改走 Server Action（roles/actions.js），
+ * 本端点保留作 Route Handler 版参考：同一个业务在两条路线下的写法对比，
+ * 见 docs/server-actions.md。页面代码不再调用 api.roles.update。
+ *
  * 1 级锁定不可改（服务端也拦，不只靠页面禁用勾选框）；
  * permissions 做白名单过滤：只保留 ALL_PERMISSIONS 里定义过的权限点并去重，
  * 伪造的字符串直接丢弃，而不是报错——客户端传脏数据不该让整次保存失败。

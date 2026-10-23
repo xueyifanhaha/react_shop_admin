@@ -6,6 +6,7 @@ import { Alert, App, Button, Checkbox, Tag } from 'antd'
 import { ReloadOutlined } from '@ant-design/icons'
 import { PERMISSION_GROUPS, ROLE_PRESETS } from '@/shared/permissions'
 import { api } from '@/lib/api'
+import { saveRolePermissions } from './actions'
 import './roles.scss'
 
 /**
@@ -68,12 +69,17 @@ export default function RolesPage() {
   const emptyRisk = rolesQuery.data
     && LEVELS.some(({ level, locked }) => !locked && !isChecked(level, 'product:view'))
 
-  /* ---------- 保存：逐级 PUT，成功后失效缓存让 savedRoles 与服务端对账 ---------- */
+  /* ---------- 保存：逐级提交（Server Action 版），成功后失效缓存让 savedRoles 与服务端对账 ----------
+   * 练习④：mutationFn 从 api.roles.update()（fetch PUT /api/roles/:level）
+   * 换成直接 await 服务端函数 saveRolePermissions()——URL 设计、fetch 封装、
+   * JSON 序列化三层样板全部消失；权限校验 / 写库 / 写日志都在 actions.js 服务端完成。
+   * 页面代码唯一感知到的差异：onError 里拿 err.message（Action 直传），
+   * 而不再是 api 层附加的 err.bizMessage */
   const saveMutation = useMutation({
     mutationFn: async (levels) => {
       // 顺序提交，中途失败时前面已落库的级别保留在服务端
       for (const level of levels) {
-        await api.roles.update(level, draftOf(level))
+        await saveRolePermissions(level, draftOf(level))
       }
     },
     onSuccess: () => {
@@ -83,7 +89,7 @@ export default function RolesPage() {
     onError: (err) => {
       // 部分成功也失效一次：已落库的级别让 savedRoles 追上来，失败级别留在草稿里可重试
       queryClient.invalidateQueries({ queryKey: ['roles'] })
-      message.error(err.bizMessage)
+      message.error(err.message ?? '保存失败')
     },
   })
 

@@ -19,7 +19,7 @@
 | ----------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------- |
 | **`loading.jsx` + Suspense 流式渲染**                           | ✅ 已完成（2026-10-23）       | ⭐ 段级 + logs 页级两层骨架 + /slow 演示页，与 useQuery spinner 的两层分工见 [loading-suspense.md](./loading-suspense.md) |
 | **`error.jsx` / `global-error.jsx`**                        | ✅ 已完成（2026-10-23）  | ⭐ 页面级错误自己写的 Alert 管数据失败；段级 error.jsx 兜**渲染异常**，global-error 兜根 layout 异常。 |
-| **Server Actions（`'use server'`）**                          | ⬜ 练习④              | ⭐ 大头。现在增删改全走 route.js + api.js，Server Actions 是另一条路（表单直提交、免手写 fetch 层）。拿「roles 保存」改一版对比，能理解 App Router 两种写操作范式 |
+| **Server Actions（`'use server'`）**                          | ✅ 已完成（2026-10-23） | ⭐ roles 保存改走 `roles/actions.js`，route.js 端点版保留作两条范式对照，见 [server-actions.md](./server-actions.md) |
 | React Query SSR Hydration（prefetch + dehydrate）             | ⬜ 练习③              | 讲过没写过——「Nuxt 首屏有数据」那个模式的 React 版，补上后登录页→列表页能跳过 loading 一闪                                                      |
 | metadata API / `generateMetadata`                           | 没用过                | 每页现在共用根 layout 的标题，补 `<title>` 按页面变化，10 分钟的事，可顺手加进任一练习                                                         |
 | `next/dynamic`                                              | 没用过                | 比如把 roles 的重型矩阵页做路由级代码分割；目前自家代码仅 25K gzip 没必要，了解即可                                                             |
@@ -33,6 +33,6 @@
 1. ✅ **`useDeferredValue` 重构搜索**（2026-10-23 完成，ed94f26）
 2. ✅ **`(admin)` 段加 `loading.jsx` + `error.jsx`**（2026-10-23 完成）—— error.jsx（含 global-error.jsx）+ 段级/页面级两层 loading 骨架 + /slow 流式演示页
 3. ⬜ **React Query SSR Hydration** —— 补齐「服务端预取」能力，对标 Nuxt 的 useAsyncData 体验
-4. ⬜ **Server Actions 改写 roles 保存** —— 唯一的「另一条范式」级技术，做完后 App Router 两条写操作路线都趟过
+4. ✅ **Server Actions 改写 roles 保存**（2026-10-23 完成）—— `roles/actions.js` 直接在 mutationFn 里 await 服务端函数，与 route.js 对照
 
 > 这四个做完，日常后台开发会用到的 React/Next 面基本全覆盖。
