@@ -92,3 +92,7 @@ useDeferredValue(值) → 返回一个"慢半拍"的副本
 ## 留给 products 页的作业
 
 products 列表页还是旧的双层 state 方案（它多一个分类 Select 和状态列）。试着按本文模式重构它，验证脚本在 `workspace/verify-products.mjs`（若与 logs 流程一致可直接复用断言思路）。
+
+## 延伸阅读
+
+- 同主题问答（原始值 vs deferred 值各用在哪、口诀）：[use-deferred-value-qa.md](./use-deferred-value-qa.md)
