@@ -2,6 +2,9 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import { db } from '@/server/utils/db'
 import ProductsClient from './ProductsClient'
 
+/** title 是短名，根 layout 的 template 会拼成「商品管理 · 商城后台」 */
+export const metadata = { title: '商品管理' }
+
 /**
  * 商品列表页外壳（练习③：React Query SSR Hydration）。
  *

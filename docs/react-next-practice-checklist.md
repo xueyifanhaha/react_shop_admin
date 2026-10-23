@@ -20,8 +20,8 @@
 | **`loading.jsx` + Suspense 流式渲染**                           | ✅ 已完成（2026-10-23）       | ⭐ 段级 + logs 页级两层骨架 + /slow 演示页，与 useQuery spinner 的两层分工见 [loading-suspense.md](./loading-suspense.md) |
 | **`error.jsx` / `global-error.jsx`**                        | ✅ 已完成（2026-10-23）  | ⭐ 页面级错误自己写的 Alert 管数据失败；段级 error.jsx 兜**渲染异常**，global-error 兜根 layout 异常。 |
 | **Server Actions（`'use server'`）**                          | ✅ 已完成（2026-10-23） | ⭐ roles 保存改走 `roles/actions.js`，route.js 端点版保留作两条范式对照，见 [server-actions.md](./server-actions.md) |
-| React Query SSR Hydration（prefetch + dehydrate）             | ⬜ 练习③              | 讲过没写过——「Nuxt 首屏有数据」那个模式的 React 版，补上后登录页→列表页能跳过 loading 一闪                                                      |
-| metadata API / `generateMetadata`                           | 没用过                | 每页现在共用根 layout 的标题，补 `<title>` 按页面变化，10 分钟的事，可顺手加进任一练习                                                         |
+| React Query SSR Hydration（prefetch + dehydrate）             | ✅ 已完成（2026-10-23） | ⭐ products 页拆成 Server 外壳 + ProductsClient，首屏直出数据零请求，见 [ssr-hydration.md](./ssr-hydration.md) |
+| metadata API / `generateMetadata`                           | ✅ 已完成（2026-10-23） | ⭐ 根 layout template 拼接 + 四页静态导出 + 详情页动态标题，见 [metadata-api.md](./metadata-api.md) |
 | `next/dynamic`                                              | 没用过                | 比如把 roles 的重型矩阵页做路由级代码分割；目前自家代码仅 25K gzip 没必要，了解即可                                                             |
 | Parallel Routes / Intercepting Routes                       | 没用过                | 拦截路由 =「点商品详情 URL 变了但页面是弹窗」，后台挺实用但属于锦上添花                                                                        |
 | `middleware.ts`（Edge）                                       | 讲过没写               | 已明确不用：Edge 运行时读不到内存会话，知道边界即可                                                                                   |
@@ -32,7 +32,7 @@
 
 1. ✅ **`useDeferredValue` 重构搜索**（2026-10-23 完成，ed94f26）
 2. ✅ **`(admin)` 段加 `loading.jsx` + `error.jsx`**（2026-10-23 完成）—— error.jsx（含 global-error.jsx）+ 段级/页面级两层 loading 骨架 + /slow 流式演示页
-3. ⬜ **React Query SSR Hydration** —— 补齐「服务端预取」能力，对标 Nuxt 的 useAsyncData 体验
+3. ✅ **React Query SSR Hydration**（2026-10-23 完成）—— products 页服务端 prefetch + HydrationBoundary，登录落地即有数据
 4. ✅ **Server Actions 改写 roles 保存**（2026-10-23 完成）—— `roles/actions.js` 直接在 mutationFn 里 await 服务端函数，与 route.js 对照
 
 > 这四个做完，日常后台开发会用到的 React/Next 面基本全覆盖。

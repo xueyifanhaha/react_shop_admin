@@ -9,7 +9,12 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "商城后台管理系统",
+  // template 只作用于「子段导出的 title」：子段写 { title: '操作日志' }，
+  // 渲染成「操作日志 · 商城后台」；没有子段 title 的页面（登录页/403）走 default
+  title: {
+    default: "商城后台管理系统",
+    template: "%s · 商城后台",
+  },
   description: "Shop admin dashboard",
 };
 
