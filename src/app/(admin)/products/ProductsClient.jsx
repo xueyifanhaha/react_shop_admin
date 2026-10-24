@@ -121,9 +121,14 @@ export default function ProductsClient() {
     {
       title: '商品',
       minWidth: 280,
+      // 商品名 = 快看入口：应用内导航到 /products/:id 被 @modal/(.)[id] 拦截 → 弹窗
       render: (_, row) => (
         <div className="prod-meta">
-          <b>{row.name}</b>
+          <b>
+            <Button type="link" size="small" className="!px-0" onClick={() => router.push(`/products/${row.id}`)}>
+              {row.name}
+            </Button>
+          </b>
           <span>{row.sku}</span>
         </div>
       ),
@@ -179,7 +184,11 @@ export default function ProductsClient() {
           fixed: 'right',
           render: (_, row) => (
             <span className="space-x-3">
-              <Button type="link" size="small" className="!px-0" onClick={() => router.push(`/products/${row.id}`)}>编辑</Button>
+              {/* <a> 整页跳转绕过拦截路由——应用内导航（Link/router.push）都会被
+                  @modal/(.)[id] 拦成弹窗，编辑必须直达完整页，故用逃生通道 */}
+              <Button type="link" size="small" className="!px-0">
+                <a href={`/products/${row.id}`}>编辑</a>
+              </Button>
               <Button type="link" danger size="small" className="!px-0" onClick={() => onDelete(row)}>删除</Button>
             </span>
           ),
