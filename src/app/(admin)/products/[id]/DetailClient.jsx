@@ -40,6 +40,9 @@ export default function ProductDetailClient() {
   const { can } = usePermission()
   const queryClient = useQueryClient()
   const [form] = Form.useForm()
+  // 标题要跟着输入实时变，但不能在渲染里调 form.getFieldValue —— Form 还没挂载时
+  // antd 会警告「useForm 未连接到 Form」；useWatch 订阅 store，未连接时安全返回 undefined
+  const nameValue = Form.useWatch('name', form)
 
   const isNew = id === 'new'
   const canEdit = can(PERM.PRODUCT_EDIT)
@@ -117,7 +120,7 @@ export default function ProductDetailClient() {
           type="error"
           showIcon
           className="flex-1"
-          message={status === 404 ? '商品不存在' : '商品加载失败'}
+          title={status === 404 ? '商品不存在' : '商品加载失败'}
           description={productQuery.error?.bizMessage ?? '请确认商品 ID 是否正确'}
         />
         <Button className="shrink-0" onClick={() => productQuery.refetch()}>重新加载</Button>
@@ -143,7 +146,7 @@ export default function ProductDetailClient() {
             返回列表
           </Link>
           <h1 className="pedit-title">
-            {form.getFieldValue('name') || (isNew ? '新建商品' : '商品编辑')}
+            {nameValue || (isNew ? '新建商品' : '商品编辑')}
           </h1>
           {product
             ? (
@@ -180,7 +183,7 @@ export default function ProductDetailClient() {
           showIcon
           closable={false}
           className="pedit-notice"
-          message="当前账号没有编辑权限"
+          title="当前账号没有编辑权限"
           description="商品编辑页需要 product:edit 权限，表单已置为只读。"
         />
       )}

@@ -58,7 +58,11 @@ export default function CategoryEditModal({ open, editing, onClose, onSaved }) {
       okText="保存"
       cancelText="取消"
       confirmLoading={saveMutation.isPending}
-      forceRender
+      // 不要 forceRender：它会让 antd 在客户端首帧就渲染弹窗 portal，
+      // 而服务端渲染时 portal 需要 document、只能输出空 → hydration 不一致
+      // （React 报 mismatch 并重渲整棵子树）。不强制渲染时，弹窗首次打开才挂载，
+      // SSR 与客户端首帧都是 null，一致；Form 在首次 open 的同一次提交里挂载，
+      // 下面的 setFieldsValue effect 仍能拿到实例。
     >
       <Form form={form} layout="vertical" initialValues={{ name: '', description: '' }}>
         <Form.Item

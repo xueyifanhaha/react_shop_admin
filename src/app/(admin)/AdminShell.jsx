@@ -48,14 +48,9 @@ export default function AdminShell({ user, permissions, children }) {
   const pathname = usePathname()
   const router = useRouter()
   const { message } = App.useApp()
-  const setSession = useAuthStore(s => s.setSession)
   const logout = useAuthStore(s => s.logout)
+  // 权限已由外层 AuthProvider 提供（服务端 props 直传，首帧即有值），这里不再写 store
   const { role, can } = usePermission()
-
-  // 服务端已确认过会话，这里只做一次注入，供页面组件读取
-  useEffect(() => {
-    setSession(user, permissions)
-  }, [user, permissions, setSession])
 
   /* ---------- 页面级权限守卫（对标旧版全局中间件的 /403 分支） ----------
    * 服务端布局只拦「未登录」；「已登录但权限不足」在这里 replace 到 /403。
